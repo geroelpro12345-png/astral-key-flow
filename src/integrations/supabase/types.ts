@@ -14,7 +14,142 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      keys: {
+        Row: {
+          code: string
+          created_at: string
+          duration: Database["public"]["Enums"]["key_duration"]
+          expires_at: string | null
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["key_status"]
+          user_associated: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          duration: Database["public"]["Enums"]["key_duration"]
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["key_status"]
+          user_associated?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          duration?: Database["public"]["Enums"]["key_duration"]
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["key_status"]
+          user_associated?: string | null
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          discord_user_id: string | null
+          id: string
+          priority: Database["public"]["Enums"]["report_priority"]
+          status: Database["public"]["Enums"]["report_status"]
+          title: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          discord_user_id?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["report_priority"]
+          status?: Database["public"]["Enums"]["report_status"]
+          title: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          discord_user_id?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["report_priority"]
+          status?: Database["public"]["Enums"]["report_status"]
+          title?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      tracker_events: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          stage: Database["public"]["Enums"]["tracker_stage"]
+          tracker_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          stage: Database["public"]["Enums"]["tracker_stage"]
+          tracker_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          stage?: Database["public"]["Enums"]["tracker_stage"]
+          tracker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracker_events_tracker_id_fkey"
+            columns: ["tracker_id"]
+            isOneToOne: false
+            referencedRelation: "trackers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trackers: {
+        Row: {
+          created_at: string
+          current_stage: Database["public"]["Enums"]["tracker_stage"]
+          id: string
+          report_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["tracker_stage"]
+          id?: string
+          report_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["tracker_stage"]
+          id?: string
+          report_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trackers_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: true
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +158,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      key_duration: "1d" | "7d" | "15d" | "30d" | "60d" | "90d" | "permanent"
+      key_status: "active" | "suspended" | "expired"
+      report_priority: "baja" | "media" | "alta" | "critica"
+      report_status: "pendiente" | "en_revision" | "resuelto" | "cerrado"
+      tracker_stage:
+        | "enviado"
+        | "recibido"
+        | "en_revision"
+        | "investigando"
+        | "resolucion_aplicada"
+        | "finalizado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +295,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      key_duration: ["1d", "7d", "15d", "30d", "60d", "90d", "permanent"],
+      key_status: ["active", "suspended", "expired"],
+      report_priority: ["baja", "media", "alta", "critica"],
+      report_status: ["pendiente", "en_revision", "resuelto", "cerrado"],
+      tracker_stage: [
+        "enviado",
+        "recibido",
+        "en_revision",
+        "investigando",
+        "resolucion_aplicada",
+        "finalizado",
+      ],
+    },
   },
 } as const
