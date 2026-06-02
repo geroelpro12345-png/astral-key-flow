@@ -117,16 +117,24 @@ function StatCard({ icon: Icon, label, value, sub, tone }: {
     ? "linear-gradient(135deg, oklch(0.62 0.25 305 / 25%), transparent)"
     : "linear-gradient(135deg, oklch(0.65 0.25 25 / 25%), transparent)";
   return (
-    <div className="glass-strong group relative overflow-hidden rounded-2xl p-5 transition hover:-translate-y-0.5"
+    <div className="glass-strong group relative overflow-hidden rounded-2xl p-5 hover-lift cursor-default"
       style={{ boxShadow: `var(--shadow-card), ${glow}` }}>
-      <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full blur-2xl opacity-50" style={{ background: grad }} />
+      <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500 animate-glow-pulse" style={{ background: grad }} />
       <div className="relative flex items-start justify-between">
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
-          <p className="mt-2 font-display text-4xl font-bold">{value}</p>
+          <motion.p
+            key={value}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mt-2 font-display text-4xl font-bold tabular-nums"
+          >
+            {value}
+          </motion.p>
           <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-2.5 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
           <Icon className="h-5 w-5 text-foreground/90" />
         </div>
       </div>
