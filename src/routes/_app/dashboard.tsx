@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { motion } from "framer-motion";
 import { KeyRound, FileWarning, Route as RouteIcon, Activity, Sparkles, AlertTriangle, Clock } from "lucide-react";
 import { getDashboardStats } from "@/lib/admin.functions";
 import { getAccessCode } from "@/lib/access-store";
 import { StatusBadge, PriorityBadge } from "@/components/Badges";
 import { SkeletonCard } from "@/components/SkeletonCard";
+import { StaggerList, StaggerItem } from "@/components/PageTransition";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({ meta: [{ title: "Resumen — Nexus Vault" }] }),
