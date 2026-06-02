@@ -1,11 +1,13 @@
 import { Link, Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard, KeyRound, FileWarning, Route as RouteIcon,
   Settings, LogOut, Shield, Menu, X,
 } from "lucide-react";
 import { clearAccessCode, getAccessCode } from "@/lib/access-store";
 import { toast } from "sonner";
+import { PageTransition } from "@/components/PageTransition";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
