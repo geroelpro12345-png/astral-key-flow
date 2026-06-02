@@ -172,7 +172,7 @@ export const updateReport = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     assertAccess(data.accessCode);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = {};
+    const patch: { status?: typeof data.status; priority?: typeof data.priority } = {};
     if (data.status) patch.status = data.status;
     if (data.priority) patch.priority = data.priority;
     const { error } = await supabaseAdmin.from("reports").update(patch).eq("id", data.id);
