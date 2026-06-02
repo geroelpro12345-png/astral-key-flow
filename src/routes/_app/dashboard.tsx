@@ -35,21 +35,21 @@ function Dashboard() {
         </div>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <StaggerList className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (
           <>
-            <StatCard icon={KeyRound} label="Keys activas" value={data?.keysActive ?? 0} sub={`${data?.keysTotal ?? 0} totales`} tone="primary" />
-            <StatCard icon={FileWarning} label="Reportes" value={data?.reportsTotal ?? 0} sub={`${data?.reportsPending ?? 0} pendientes`} tone="secondary" />
-            <StatCard icon={RouteIcon} label="Trackers activos" value={data?.trackersActive ?? 0} sub="En proceso" tone="primary" />
-            <StatCard icon={AlertTriangle} label="Críticos" value={data?.reportsCritical ?? 0} sub="Prioridad máxima" tone="danger" />
+            <StaggerItem><StatCard icon={KeyRound} label="Keys activas" value={data?.keysActive ?? 0} sub={`${data?.keysTotal ?? 0} totales`} tone="primary" /></StaggerItem>
+            <StaggerItem><StatCard icon={FileWarning} label="Reportes" value={data?.reportsTotal ?? 0} sub={`${data?.reportsPending ?? 0} pendientes`} tone="secondary" /></StaggerItem>
+            <StaggerItem><StatCard icon={RouteIcon} label="Trackers activos" value={data?.trackersActive ?? 0} sub="En proceso" tone="primary" /></StaggerItem>
+            <StaggerItem><StatCard icon={AlertTriangle} label="Críticos" value={data?.reportsCritical ?? 0} sub="Prioridad máxima" tone="danger" /></StaggerItem>
           </>
         )}
-      </section>
+      </StaggerList>
 
       <section className="grid gap-4 lg:grid-cols-3">
-        <div className="glass-strong rounded-2xl p-6 lg:col-span-2">
+        <div className="glass-strong rounded-2xl p-6 lg:col-span-2 scan-line-overlay">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-primary" />
