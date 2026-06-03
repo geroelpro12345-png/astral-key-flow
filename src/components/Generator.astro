@@ -27,82 +27,65 @@
 </div>
 
 <script>
-  import { createClient } from '@supabase/supabase-js'
+  // Cargar Supabase desde CDN
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  script.onload = function() {
+    // Configuración
+    const SUPABASE_URL = 'https://mtpboiuvqfunbdcdsaug.supabase.co';  // ⚠️ CAMBIAR
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cGJvaXV2cWZ1bmJkY2RzYXVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzU2NDEsImV4cCI6MjA5NjAxMTY0MX0.4FP6ZQpiZSBx1XtXpl1D40TSkWujsbjDvEeBQj3hROE';                 // ⚠️ CAMBIAR
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ⚠️ CAMBIA ESTOS DATOS POR LOS TUYOS
-  const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co'
-  const SUPABASE_ANON_KEY = 'TU-ANON-KEY'
-  
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const generateBtn = document.getElementById('generateBtn')
-    const keyResult = document.getElementById('keyResult')
-    const keyCode = document.getElementById('keyCode')
-    const copyBtn = document.getElementById('copyBtn')
+    // Elementos
+    const generateBtn = document.getElementById('generateBtn');
+    const keyResult = document.getElementById('keyResult');
+    const keyCode = document.getElementById('keyCode');
+    const copyBtn = document.getElementById('copyBtn');
 
     // Generar key
     generateBtn.addEventListener('click', async () => {
-      // Crear key aleatoria
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-      const segments = []
+      // Key aleatoria
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      const segments = [];
       for (let i = 0; i < 4; i++) {
-        let segment = ''
+        let segment = '';
         for (let j = 0; j < 4; j++) {
-          segment += chars[Math.floor(Math.random() * chars.length)]
+          segment += chars[Math.floor(Math.random() * chars.length)];
         }
-        segments.push(segment)
+        segments.push(segment);
       }
-      const key = 'AST-' + segments.join('-')
+      const key = 'AST-' + segments.join('-');
 
-      // UI loading
-      generateBtn.disabled = true
-      generateBtn.textContent = '⏳ Generando...'
+      // Loading
+      generateBtn.disabled = true;
+      generateBtn.textContent = '⏳ Generando...';
 
-      // Guardar en Supabase
-      const { data, error } = await supabase
+      // Guardar
+      const { error } = await supabase
         .from('keys')
-        .insert([{ 
-          key: key, 
-          is_active: true,
-          expires_at: null 
-        }])
-        .select()
+        .insert([{ key, is_active: true }]);
 
       if (error) {
-        console.error('Error:', error)
-        alert('Error al generar la key. Intenta de nuevo.')
-        generateBtn.disabled = false
-        generateBtn.textContent = '✨ Generar Key'
-        return
+        alert('Error: ' + error.message);
+        generateBtn.disabled = false;
+        generateBtn.textContent = '✨ Generar Key';
+        return;
       }
 
-      // Mostrar key
-      keyCode.textContent = key
-      keyResult.classList.remove('hidden')
-      generateBtn.disabled = false
-      generateBtn.textContent = '✨ Generar Key'
+      // Mostrar
+      keyCode.textContent = key;
+      keyResult.classList.remove('hidden');
+      generateBtn.disabled = false;
+      generateBtn.textContent = '✨ Generar Key';
+    });
 
-      // Animación
-      keyResult.style.transform = 'scale(1.05)'
-      setTimeout(() => {
-        keyResult.style.transform = 'scale(1)'
-      }, 200)
-    })
-
-    // Copiar key
-    copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(keyCode.textContent)
-        copyBtn.textContent = '✅ Copiado!'
-        copyBtn.classList.add('bg-green-600')
-        setTimeout(() => {
-          copyBtn.textContent = '📋 Copiar'
-          copyBtn.classList.remove('bg-green-600')
-        }, 2000)
-      } catch (err) {
-        alert('Error al copiar')
-      }
-    })
-  })
+    // Copiar
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(keyCode.textContent);
+      copyBtn.textContent = '✅ Copiado!';
+      setTimeout(() => { copyBtn.textContent = '📋 Copiar'; }, 2000);
+    });
+  };
+  document.head.appendChild(script);
 </script>
