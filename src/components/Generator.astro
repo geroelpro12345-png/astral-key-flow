@@ -27,65 +27,84 @@
 </div>
 
 <script>
-  // Cargar Supabase desde CDN
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  script.onload = function() {
-    // Configuración
-    const SUPABASE_URL = 'https://mtpboiuvqfunbdcdsaug.supabase.co';  // ⚠️ CAMBIAR
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cGJvaXV2cWZ1bmJkY2RzYXVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzU2NDEsImV4cCI6MjA5NjAxMTY0MX0.4FP6ZQpiZSBx1XtXpl1D40TSkWujsbjDvEeBQj3hROE';                 // ⚠️ CAMBIAR
-    
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Tu configuración de Supabase
+  const SUPABASE_URL = 'https://mtpboiuvqfunbdcdsaug.supabase.co'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cGJvaXV2cWZ1bmJkY2RzYXVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzU2NDEsImV4cCI6MjA5NjAxMTY0MX0.4FP6ZQpiZSBx1XtXpl1D40TSkWujsbjDvEeBQj3hROE'
+  
+  function generateKey() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    const segments = []
+    for (let i = 0; i < 4; i++) {
+      let segment = ''
+      for (let j = 0; j < 4; j++) {
+        segment += chars[Math.floor(Math.random() * chars.length)]
+      }
+      segments.push(segment)
+    }
+    return 'AST-' + segments.join('-')
+  }
 
-    // Elementos
-    const generateBtn = document.getElementById('generateBtn');
-    const keyResult = document.getElementById('keyResult');
-    const keyCode = document.getElementById('keyCode');
-    const copyBtn = document.getElementById('copyBtn');
+  document.addEventListener('DOMContentLoaded', () => {
+    const generateBtn = document.getElementById('generateBtn')
+    const keyResult = document.getElementById('keyResult')
+    const keyCode = document.getElementById('keyCode')
+    const copyBtn = document.getElementById('copyBtn')
 
-    // Generar key
     generateBtn.addEventListener('click', async () => {
-      // Key aleatoria
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      const segments = [];
-      for (let i = 0; i < 4; i++) {
-        let segment = '';
-        for (let j = 0; j < 4; j++) {
-          segment += chars[Math.floor(Math.random() * chars.length)];
+      const key = generateKey()
+      
+      generateBtn.disabled = true
+      generateBtn.textContent = '⏳ Generando...'
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/keys`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ 
+            key: key, 
+            is_active: true,
+            created_at: new Date().toISOString()
+          })
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.message || 'Error al crear key')
         }
-        segments.push(segment);
+
+        keyCode.textContent = key
+        keyResult.classList.remove('hidden')
+        keyResult.style.transform = 'scale(1.05)'
+        setTimeout(() => {
+          keyResult.style.transform = 'scale(1)'
+        }, 200)
+        
+      } catch (error) {
+        console.error('Error:', error)
+        alert('Error al generar key: ' + error.message)
+      } finally {
+        generateBtn.disabled = false
+        generateBtn.textContent = '✨ Generar Key'
       }
-      const key = 'AST-' + segments.join('-');
+    })
 
-      // Loading
-      generateBtn.disabled = true;
-      generateBtn.textContent = '⏳ Generando...';
-
-      // Guardar
-      const { error } = await supabase
-        .from('keys')
-        .insert([{ key, is_active: true }]);
-
-      if (error) {
-        alert('Error: ' + error.message);
-        generateBtn.disabled = false;
-        generateBtn.textContent = '✨ Generar Key';
-        return;
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(keyCode.textContent)
+        copyBtn.textContent = '✅ Copiado!'
+        copyBtn.style.backgroundColor = '#10B981'
+        setTimeout(() => {
+          copyBtn.textContent = '📋 Copiar'
+          copyBtn.style.backgroundColor = ''
+        }, 2000)
+      } catch (err) {
+        alert('Error al copiar al portapapeles')
       }
-
-      // Mostrar
-      keyCode.textContent = key;
-      keyResult.classList.remove('hidden');
-      generateBtn.disabled = false;
-      generateBtn.textContent = '✨ Generar Key';
-    });
-
-    // Copiar
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(keyCode.textContent);
-      copyBtn.textContent = '✅ Copiado!';
-      setTimeout(() => { copyBtn.textContent = '📋 Copiar'; }, 2000);
-    });
-  };
-  document.head.appendChild(script);
+    })
+  })
 </script>
